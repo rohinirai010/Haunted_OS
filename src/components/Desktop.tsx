@@ -1601,20 +1601,6 @@ export const Desktop = () => {
         </div>
       </motion.div>
 
-      {/* Windows */}
-      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 200 }}>
-        <AnimatePresence>
-          {windows.map((window) => {
-            const AppComponent = appComponents[window.appId as keyof typeof appComponents];
-            return (
-              <WindowManager key={window.id} windowId={window.id}>
-                {AppComponent && <AppComponent windowId={window.id} />}
-              </WindowManager>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-
       {/* Pentagram Background */}
       <motion.div
         animate={{
@@ -2118,6 +2104,20 @@ export const Desktop = () => {
           </motion.div>
         );
       })}
+
+      {/* Windows - Isolated from shake effect */}
+      <div className="absolute inset-0 pointer-events-none shake-immune" style={{ zIndex: 200 }}>
+        <AnimatePresence>
+          {windows.map((window) => {
+            const AppComponent = appComponents[window.appId as keyof typeof appComponents];
+            return (
+              <WindowManager key={window.id} windowId={window.id}>
+                {AppComponent && <AppComponent windowId={window.id} />}
+              </WindowManager>
+            );
+          })}
+        </AnimatePresence>
+      </div>
 
       {/* Taskbar */}
       <Taskbar />

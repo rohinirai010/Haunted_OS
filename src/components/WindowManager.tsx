@@ -51,11 +51,11 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
         const maxX = Math.max(0, globalThis.window.innerWidth - newWidth - 20);
         const maxY = Math.max(0, globalThis.window.innerHeight - newHeight - 84);
 
-        if (window.x > maxX || window.y > maxY) {
+        if (window.x > maxX || window.y > maxY || window.x < 0 || window.y < 0) {
           updateWindowPosition(
             windowId,
-            Math.min(window.x, maxX),
-            Math.min(window.y, maxY)
+            Math.max(0, Math.min(window.x, maxX)),
+            Math.max(0, Math.min(window.y, maxY))
           );
         }
       }
@@ -72,8 +72,31 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
     };
   }, [windowId, window?.maximized, window?.width, window?.height, window?.x, window?.y, updateWindowSize, updateWindowPosition]);
 
+  // Additional effect to ensure window stays in bounds on mount only
+  useEffect(() => {
+    if (!window || window.minimized || window.maximized) return;
+
+    const maxX = Math.max(0, globalThis.window.innerWidth - (window.width || 800) - 20);
+    const maxY = Math.max(0, globalThis.window.innerHeight - (window.height || 600) - 84);
+
+    if (window.x < 0 || window.y < 0 || window.x > maxX || window.y > maxY) {
+      updateWindowPosition(
+        windowId,
+        Math.max(0, Math.min(window.x, maxX)),
+        Math.max(0, Math.min(window.y, maxY))
+      );
+    }
+  }, [windowId]); // Only run on mount
+
   const handleDrag = (_e: any, data: { x: number; y: number }) => {
-    updateWindowPosition(windowId, data.x, data.y);
+    // Ensure window stays within bounds
+    const maxX = Math.max(0, globalThis.window.innerWidth - (window?.width || 800) - 20);
+    const maxY = Math.max(0, globalThis.window.innerHeight - (window?.height || 600) - 84);
+    
+    const constrainedX = Math.max(0, Math.min(data.x, maxX));
+    const constrainedY = Math.max(0, Math.min(data.y, maxY));
+    
+    updateWindowPosition(windowId, constrainedX, constrainedY);
   };
 
   const handleMinimize = () => {
@@ -104,26 +127,28 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
     <Draggable
       handle=".window-header"
       position={{ x: window.x, y: window.y }}
+      onDrag={handleDrag}
       onStop={handleDrag}
+      disabled={window.maximized}
       bounds={{
         left: 0,
         top: 0,
         right: window.maximized
           ? 0
           : typeof window.width === 'number'
-            ? Math.max(0, globalThis.window.innerWidth - window.width)
+            ? Math.max(0, globalThis.window.innerWidth - window.width - 20)
             : 0,
         bottom: window.maximized
           ? 0
           : typeof window.height === 'number'
-            ? Math.max(0, globalThis.window.innerHeight - window.height - 64)
+            ? Math.max(0, globalThis.window.innerHeight - window.height - 84)
             : 0,
       }}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.98, y: 0 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 0 }}
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.15, ease: 'easeOut' }}
         className={`absolute bg-haunted-black/95 border-2 rounded window-shadow backdrop-blur-sm pointer-events-auto ${isActive
           ? 'border-haunted-accent shadow-[0_0_30px_rgba(255,107,107,0.5)]'
@@ -136,8 +161,11 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
           left: window.maximized ? 0 : undefined,
           top: window.maximized ? 0 : undefined,
           position: 'absolute',
+          transform: 'translate3d(0, 0, 0)',
+          willChange: 'auto',
         }}
         onMouseDown={() => setActiveWindow(windowId)}
+        onTouchStart={() => setActiveWindow(windowId)}
       >
         {/* Window Header - Responsive */}
         <div className="window-header bg-gradient-to-b from-haunted-blue to-haunted-black border-b-2 border-haunted-accent p-2 sm:p-2 flex items-center justify-between cursor-move touch-none">
