@@ -153,10 +153,27 @@
   /* Reduce animations on mobile to prevent blinking and improve performance */
   @media (max-width: 640px) {
     .flicker-text {
-      animation: none;
+      animation: none !important;
     }
     
-    /* Reduce motion for users who prefer it or on mobile */
+    /* Disable blood drip animation on mobile */
+    .blood-drip {
+      animation: none !important;
+      opacity: 0.3 !important;
+    }
+    
+    /* Reduce shake intensity on mobile */
+    .shake {
+      animation: none !important;
+    }
+    
+    /* Disable all framer-motion animations on mobile to prevent blinking */
+    * {
+      animation-duration: 0.3s !important;
+      animation-iteration-count: 1 !important;
+    }
+    
+    /* Reduce motion for users who prefer it */
     @media (prefers-reduced-motion: reduce) {
       * {
         animation-duration: 0.01ms !important;

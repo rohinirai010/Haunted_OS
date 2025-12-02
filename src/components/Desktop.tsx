@@ -24,10 +24,24 @@ export const Desktop = () => {
   const [shake, setShake] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [showGhostJumpScare, setShowGhostJumpScare] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const sounds = useHorrorSounds();
 
-  // GHOST JUMP SCARE - only on initial desktop load when no apps are open
+  // Detect mobile device
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // GHOST JUMP SCARE - only on initial desktop load when no apps are open (disabled on mobile)
+  useEffect(() => {
+    // Disable on mobile to prevent performance issues
+    if (isMobile) return;
+    
     // Only show if no windows are open (first time on desktop)
     if (windows.length === 0) {
       const timer = setTimeout(() => {
@@ -48,9 +62,12 @@ export const Desktop = () => {
 
       return () => clearTimeout(timer);
     }
-  }, []); // Empty dependency array - only runs once on mount
+  }, [isMobile]); // Re-run if mobile state changes
 
   useEffect(() => {
+    // Disable heavy effects on mobile to prevent blinking
+    if (isMobile) return;
+    
     // Random screen glitch effect
     const glitchInterval = setInterval(() => {
       if (Math.random() > 0.95) {
@@ -115,7 +132,7 @@ export const Desktop = () => {
       clearInterval(ambientInterval);
       clearInterval(jumpScareInterval);
     };
-  }, [sounds]);
+  }, [sounds, isMobile]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -140,39 +157,45 @@ export const Desktop = () => {
           }}
         />
 
-        {/* Fog Effect */}
-        <motion.div
-          animate={{
-            opacity: [0.1, 0.3, 0.1],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute inset-0 bg-gradient-to-t from-haunted-red/20 to-transparent"
-        />
+        {/* Fog Effect - Disabled on mobile */}
+        {!isMobile && (
+          <motion.div
+            animate={{
+              opacity: [0.1, 0.3, 0.1],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute inset-0 bg-gradient-to-t from-haunted-red/20 to-transparent"
+          />
+        )}
 
-        {/* Moving Shadows */}
-        <motion.div
-          animate={{
-            x: mousePos.x * 0.02,
-            y: mousePos.y * 0.02,
-          }}
-          transition={{ type: 'spring', stiffness: 50, damping: 20 }}
-          className="absolute w-96 h-96 bg-haunted-accent/5 rounded-full blur-3xl"
-          style={{ left: '20%', top: '30%' }}
-        />
-        <motion.div
-          animate={{
-            x: -mousePos.x * 0.03,
-            y: -mousePos.y * 0.03,
-          }}
-          transition={{ type: 'spring', stiffness: 50, damping: 20 }}
-          className="absolute w-96 h-96 bg-haunted-red/5 rounded-full blur-3xl"
-          style={{ right: '20%', bottom: '30%' }}
-        />
+        {/* Moving Shadows - Disabled on mobile */}
+        {!isMobile && (
+          <>
+            <motion.div
+              animate={{
+                x: mousePos.x * 0.02,
+                y: mousePos.y * 0.02,
+              }}
+              transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+              className="absolute w-96 h-96 bg-haunted-accent/5 rounded-full blur-3xl"
+              style={{ left: '20%', top: '30%' }}
+            />
+            <motion.div
+              animate={{
+                x: -mousePos.x * 0.03,
+                y: -mousePos.y * 0.03,
+              }}
+              transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+              className="absolute w-96 h-96 bg-haunted-red/5 rounded-full blur-3xl"
+              style={{ right: '20%', bottom: '30%' }}
+            />
+          </>
+        )}
       </div>
 
       {/* VHS Scan Lines */}
@@ -1689,14 +1712,19 @@ export const Desktop = () => {
         🕸️
       </motion.div>
 
-      {/* Blood Drips */}
-      <div className="absolute top-0 left-1/4 w-1 h-20 bg-gradient-to-b from-haunted-red to-transparent opacity-60 blood-drip" style={{ animationDelay: '0s' }} />
-      <div className="absolute top-0 left-1/2 w-1 h-16 bg-gradient-to-b from-haunted-red to-transparent opacity-50 blood-drip" style={{ animationDelay: '2s' }} />
-      <div className="absolute top-0 right-1/3 w-1 h-24 bg-gradient-to-b from-haunted-red to-transparent opacity-70 blood-drip" style={{ animationDelay: '4s' }} />
+      {/* Blood Drips - Disabled on mobile */}
+      {!isMobile && (
+        <>
+          <div className="absolute top-0 left-1/4 w-1 h-20 bg-gradient-to-b from-haunted-red to-transparent opacity-60 blood-drip" style={{ animationDelay: '0s' }} />
+          <div className="absolute top-0 left-1/2 w-1 h-16 bg-gradient-to-b from-haunted-red to-transparent opacity-50 blood-drip" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-0 right-1/3 w-1 h-24 bg-gradient-to-b from-haunted-red to-transparent opacity-70 blood-drip" style={{ animationDelay: '4s' }} />
+        </>
+      )}
 
 
 
-      {/* REALISTIC BLOOD SPLATTER 1 - Impact Pattern */}
+      {/* REALISTIC BLOOD SPLATTER 1 - Impact Pattern - Disabled on mobile */}
+      {!isMobile && (
       <motion.div
         animate={{
           scale: [0, 1, 1],
@@ -1730,8 +1758,10 @@ export const Desktop = () => {
           }} />
         </div>
       </motion.div>
+      )}
 
-      {/* REALISTIC BLOOD SPLATTER 2 - Arterial Spray Pattern */}
+      {/* REALISTIC BLOOD SPLATTER 2 - Arterial Spray Pattern - Disabled on mobile */}
+      {!isMobile && (
       <motion.div
         animate={{
           scale: [0, 1.3, 1],
@@ -1766,8 +1796,11 @@ export const Desktop = () => {
           }} />
         </div>
       </motion.div>
+      )}
 
-      {/* REALISTIC BLOOD DRIPS - Multiple streams */}
+      {/* REALISTIC BLOOD DRIPS - Multiple streams - Disabled on mobile */}
+      {!isMobile && (
+      <>
       <motion.div
         animate={{
           height: ['0%', '100%'],
@@ -1822,8 +1855,11 @@ export const Desktop = () => {
           filter: 'blur(0.5px)',
         }}
       />
+      </>
+      )}
 
-      {/* BLOODY HANDPRINT */}
+      {/* BLOODY HANDPRINT - Disabled on mobile */}
+      {!isMobile && (
       <motion.div
         animate={{
           opacity: [0, 0.7, 0.7, 0],
@@ -1846,8 +1882,10 @@ export const Desktop = () => {
           transform: 'rotate(-15deg)',
         }}
       />
+      )}
 
-      {/* SCRATCH MARKS */}
+      {/* SCRATCH MARKS - Disabled on mobile */}
+      {!isMobile && (
       <motion.div
         animate={{
           opacity: [0, 0.6, 0],
@@ -1866,8 +1904,11 @@ export const Desktop = () => {
           boxShadow: '0 8px 0 rgba(139,0,0,0.6), 0 16px 0 rgba(139,0,0,0.5), 0 24px 0 rgba(139,0,0,0.4)',
         }}
       />
+      )}
 
-      {/* CREEPY SHADOW FIGURES */}
+      {/* CREEPY SHADOW FIGURES - Disabled on mobile */}
+      {!isMobile && (
+      <>
       <motion.div
         animate={{
           x: [-200, window.innerWidth + 200],
@@ -1902,8 +1943,12 @@ export const Desktop = () => {
           filter: 'blur(10px)',
         }}
       />
+      </>
+      )}
 
-      {/* CREEPING DARKNESS FROM CORNERS */}
+      {/* CREEPING DARKNESS FROM CORNERS - Disabled on mobile */}
+      {!isMobile && (
+      <>
       <motion.div
         animate={{
           scale: [1, 1.3, 1],
@@ -1936,8 +1981,11 @@ export const Desktop = () => {
           background: 'radial-gradient(circle at bottom right, rgba(0,0,0,0.9), transparent 70%)',
         }}
       />
+      </>
+      )}
 
-      {/* GHOSTLY APPARITION */}
+      {/* GHOSTLY APPARITION - Disabled on mobile */}
+      {!isMobile && (
       <motion.div
         animate={{
           opacity: [0, 0.3, 0],
@@ -1954,8 +2002,11 @@ export const Desktop = () => {
           filter: 'blur(15px)',
         }}
       />
+      )}
 
-      {/* OMINOUS RED GLOW PULSES */}
+      {/* OMINOUS RED GLOW PULSES - Disabled on mobile */}
+      {!isMobile && (
+      <>
       <motion.div
         animate={{
           opacity: [0.1, 0.4, 0.1],
@@ -1990,9 +2041,12 @@ export const Desktop = () => {
           filter: 'blur(25px)',
         }}
       />
+      </>
+      )}
 
-      {/* BLOODY FOOTPRINTS - 2 PEOPLE WALKING IN OPPOSITE DIRECTIONS */}
-
+      {/* BLOODY FOOTPRINTS - 2 PEOPLE WALKING IN OPPOSITE DIRECTIONS - Disabled on mobile */}
+      {!isMobile && (
+      <>
       {/* PERSON 1 - Walking LEFT to RIGHT (in front, z-15) */}
       {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((step) => {
         const isLeftFoot = step % 2 === 0;
@@ -2104,6 +2158,8 @@ export const Desktop = () => {
           </motion.div>
         );
       })}
+      </>
+      )}
 
       {/* Windows - Isolated from shake effect */}
       <div className="absolute inset-0 pointer-events-none shake-immune" style={{ zIndex: 200 }}>

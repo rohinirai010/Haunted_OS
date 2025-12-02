@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Folder, FileText, Image, Music, Video, File, Skull, X } from 'lucide-react';
@@ -18,7 +18,16 @@ export const CryptFiles = () => {
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [showCursedAlert, setShowCursedAlert] = useState(false);
   const [cursedFileName, setCursedFileName] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
   const sounds = useHorrorSounds();
+
+  // Detect mobile to disable heavy animations
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const files: FileItem[] = [
     { name: 'Documents', type: 'folder', icon: 'unknown', modified: '2024-10-31 03:33' },
@@ -202,7 +211,10 @@ export const CryptFiles = () => {
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
+              animate={isMobile ? {
+                opacity: 1,
+                scale: 1,
+              } : {
                 opacity: 1,
                 scale: 1,
                 x: [0, -3, 3, -3, 3, -2, 2, -1, 1, 0],
@@ -210,7 +222,9 @@ export const CryptFiles = () => {
                 rotate: [0, -1, 1, -1, 1, -0.5, 0.5, 0],
               }}
               exit={{ opacity: 0, scale: 0.8 }}
-              transition={{
+              transition={isMobile ? {
+                duration: 0.2,
+              } : {
                 opacity: { duration: 0.2 },
                 scale: { duration: 0.2 },
                 x: { duration: 0.6, repeat: Infinity, repeatDelay: 2 },
@@ -227,6 +241,7 @@ export const CryptFiles = () => {
               <div className="bg-haunted-black border-4 border-haunted-red rounded-2xl shadow-[0_0_50px_rgba(139,0,0,0.8)] overflow-hidden">
                 {/* Skull Header */}
                 <div className="bg-gradient-to-b from-haunted-red to-haunted-black p-4 border-b-2 border-haunted-accent relative overflow-hidden">
+                  {!isMobile && (
                   <motion.div
                     animate={{
                       opacity: [0.3, 0.6, 0.3],
@@ -234,16 +249,17 @@ export const CryptFiles = () => {
                     transition={{ duration: 2, repeat: Infinity }}
                     className="absolute inset-0 bg-haunted-accent/10"
                   />
+                  )}
                   <div className="relative flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                       <motion.div
-                        animate={{
+                        animate={isMobile ? {} : {
                           rotate: [0, -8, 8, -8, 8, -5, 5, 0],
                           scale: [1, 1.15, 0.95, 1.15, 0.95, 1.1, 1],
                           x: [0, -2, 2, -2, 2, 0],
                           y: [0, -1, 1, -1, 1, 0],
                         }}
-                        transition={{
+                        transition={isMobile ? {} : {
                           duration: 0.8,
                           repeat: Infinity,
                           repeatDelay: 0.5,
@@ -268,12 +284,12 @@ export const CryptFiles = () => {
                 {/* Alert Content */}
                 <div className="p-3 sm:p-5 space-y-3 sm:space-y-4">
                   <motion.div
-                    animate={{
+                    animate={isMobile ? {} : {
                       opacity: [0.8, 1, 0.8],
                       scale: [1, 1.05, 1],
                       x: [0, -2, 2, -2, 2, 0],
                     }}
-                    transition={{
+                    transition={isMobile ? {} : {
                       opacity: { duration: 1.5, repeat: Infinity },
                       scale: { duration: 1.5, repeat: Infinity },
                       x: { duration: 0.5, repeat: Infinity, repeatDelay: 1 },
@@ -282,10 +298,10 @@ export const CryptFiles = () => {
                   >
                     <motion.p
                       className="text-xl sm:text-2xl mb-2"
-                      animate={{
+                      animate={isMobile ? {} : {
                         rotate: [0, -5, 5, -5, 5, 0],
                       }}
-                      transition={{ duration: 0.6, repeat: Infinity, repeatDelay: 1.5 }}
+                      transition={isMobile ? {} : { duration: 0.6, repeat: Infinity, repeatDelay: 1.5 }}
                     >
                       💀 ⚰️ 👻
                     </motion.p>
@@ -296,7 +312,7 @@ export const CryptFiles = () => {
 
                   <motion.div
                     className="bg-haunted-blue/30 border-2 border-haunted-accent rounded-xl p-2 sm:p-3 space-y-2"
-                    animate={{
+                    animate={isMobile ? {} : {
                       borderColor: ['rgba(255,107,107,1)', 'rgba(139,0,0,1)', 'rgba(255,107,107,1)'],
                       boxShadow: [
                         '0 0 10px rgba(255,107,107,0.5)',
@@ -304,7 +320,7 @@ export const CryptFiles = () => {
                         '0 0 10px rgba(255,107,107,0.5)',
                       ],
                     }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    transition={isMobile ? {} : { duration: 1.5, repeat: Infinity }}
                   >
                     <p className="text-xs sm:text-sm text-haunted-text break-all">
                       <span className="text-haunted-accent font-bold">File:</span>{' '}
@@ -336,14 +352,14 @@ export const CryptFiles = () => {
                   </div>
 
                   <motion.div
-                    animate={{
+                    animate={isMobile ? {} : {
                       boxShadow: [
                         '0 0 10px rgba(139,0,0,0.5)',
                         '0 0 20px rgba(139,0,0,0.8)',
                         '0 0 10px rgba(139,0,0,0.5)',
                       ],
                     }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    transition={isMobile ? {} : { duration: 1.5, repeat: Infinity }}
                     className="bg-haunted-red/20 border border-haunted-red rounded-xl p-2 sm:p-3 text-center"
                   >
                     <p className="text-xs sm:text-sm text-haunted-accent font-bold">
@@ -360,7 +376,8 @@ export const CryptFiles = () => {
                   </button>
                 </div>
 
-                {/* Animated Border Glow */}
+                {/* Animated Border Glow - Disabled on mobile */}
+                {!isMobile && (
                 <motion.div
                   animate={{
                     opacity: [0.3, 0.7, 0.3],
@@ -371,6 +388,7 @@ export const CryptFiles = () => {
                     boxShadow: 'inset 0 0 30px rgba(139,0,0,0.5)',
                   }}
                 />
+                )}
               </div>
             </motion.div>
           </div>
