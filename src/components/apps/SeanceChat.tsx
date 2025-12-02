@@ -11,11 +11,7 @@ interface Message {
   timestamp: Date;
 }
 
-interface SeanceChatProps {
-  windowId: string;
-}
-
-export const SeanceChat = ({ windowId }: SeanceChatProps) => {
+export const SeanceChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',

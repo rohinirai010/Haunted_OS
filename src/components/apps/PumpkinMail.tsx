@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Inbox, Send, Trash2 } from 'lucide-react';
+import { Inbox, Send, Trash2 } from 'lucide-react';
 
 interface Email {
   id: string;
@@ -11,11 +11,7 @@ interface Email {
   read: boolean;
 }
 
-interface PumpkinMailProps {
-  windowId: string;
-}
-
-export const PumpkinMail = ({ windowId }: PumpkinMailProps) => {
+export const PumpkinMail = () => {
   const [emails, setEmails] = useState<Email[]>([]);
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const [folder, setFolder] = useState<'inbox' | 'sent' | 'trash'>('inbox');

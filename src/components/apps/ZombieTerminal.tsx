@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
-interface ZombieTerminalProps {
-  windowId: string;
-}
-
 interface CommandHistory {
   command: string;
   output: string;
 }
 
-export const ZombieTerminal = ({ windowId }: ZombieTerminalProps) => {
+export const ZombieTerminal = () => {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<CommandHistory[]>([
     { command: '', output: 'ZOMBIE TERMINAL v1.0.0\nType "help" for available commands...\n' },

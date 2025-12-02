@@ -13,12 +13,8 @@ interface FileItem {
   cursed?: boolean;
 }
 
-interface CryptFilesProps {
-  windowId: string;
-}
-
-export const CryptFiles = ({ windowId }: CryptFilesProps) => {
-  const [currentPath, setCurrentPath] = useState('/home/user');
+export const CryptFiles = () => {
+  const [currentPath] = useState('/home/user');
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [showCursedAlert, setShowCursedAlert] = useState(false);
   const [cursedFileName, setCursedFileName] = useState('');
