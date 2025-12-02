@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    background: #000000;
+    color: #e0e0e0;
+    overflow: hidden;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="%238b0000" opacity="0.8"/><circle cx="12" cy="12" r="4" fill="%23ff0000"/><path d="M12 12 L12 22" stroke="%23ff0000" stroke-width="3" opacity="0.9"/><path d="M12 16 L10 18" stroke="%23ff0000" stroke-width="2"/><path d="M12 16 L14 18" stroke="%23ff0000" stroke-width="2"/></svg>') 12 12, auto;
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(139, 0, 0, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+    animation: pulse 4s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+}
+
+@layer components {
+  .vhs-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    z-index: 100;
+  }
+
+  .glitch-text {
+    position: relative;
+  }
+
+  .glitch-text:hover {
+    animation: glitch 0.3s infinite;
+  }
+
+  @keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+
+  .window-shadow {
+    box-shadow: 0 10px 40px rgba(139, 0, 0, 0.5);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+  }
+  
+  @keyframes bloodDrip {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh);
+      opacity: 0;
+    }
+  }
+  
+  .blood-drip {
+    animation: bloodDrip 8s ease-in infinite;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    10% { transform: translate(-2px, 2px) rotate(-1deg); }
+    20% { transform: translate(2px, -2px) rotate(1deg); }
+    30% { transform: translate(-2px, -2px) rotate(-1deg); }
+    40% { transform: translate(2px, 2px) rotate(1deg); }
+    50% { transform: translate(-2px, 2px) rotate(-1deg); }
+    60% { transform: translate(2px, -2px) rotate(1deg); }
+    70% { transform: translate(-2px, -2px) rotate(-1deg); }
+    80% { transform: translate(2px, 2px) rotate(1deg); }
+    90% { transform: translate(-2px, 2px) rotate(-1deg); }
+  }
+  
+  .shake {
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  @keyframes flicker-text {
+    0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(255, 107, 107, 0.5); }
+    50% { opacity: 0.8; text-shadow: 0 0 20px rgba(255, 107, 107, 0.8); }
+  }
+  
+  .flicker-text {
+    animation: flicker-text 0.1s infinite;
+  }
+}
+
+  /* Hide scrollbar for mobile taskbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
