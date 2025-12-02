@@ -89,12 +89,19 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
   }, [windowId]); // Only run on mount
 
   const handleDrag = (_e: any, data: { x: number; y: number }) => {
-    // Ensure window stays within bounds
-    const maxX = Math.max(0, globalThis.window.innerWidth - (window?.width || 800) - 20);
-    const maxY = Math.max(0, globalThis.window.innerHeight - (window?.height || 600) - 84);
+    if (!window) return;
     
-    const constrainedX = Math.max(0, Math.min(data.x, maxX));
-    const constrainedY = Math.max(0, Math.min(data.y, maxY));
+    // Calculate new position based on drag delta
+    const newX = window.x + data.x;
+    const newY = window.y + data.y;
+    
+    // Ensure window stays within bounds (with extra padding for mobile safe areas)
+    const minY = 20; // Extra padding for mobile status bar
+    const maxX = Math.max(0, globalThis.window.innerWidth - (window?.width || 800) - 20);
+    const maxY = Math.max(minY, globalThis.window.innerHeight - (window?.height || 600) - 84);
+    
+    const constrainedX = Math.max(0, Math.min(newX, maxX));
+    const constrainedY = Math.max(minY, Math.min(newY, maxY));
     
     updateWindowPosition(windowId, constrainedX, constrainedY);
   };
@@ -126,22 +133,22 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
   return (
     <Draggable
       handle=".window-header"
-      position={{ x: window.x, y: window.y }}
+      position={{ x: 0, y: 0 }}
       onDrag={handleDrag}
       onStop={handleDrag}
       disabled={window.maximized}
       bounds={{
-        left: 0,
-        top: 0,
+        left: -window.x,
+        top: -window.y,
         right: window.maximized
           ? 0
           : typeof window.width === 'number'
-            ? Math.max(0, globalThis.window.innerWidth - window.width - 20)
+            ? Math.max(0, globalThis.window.innerWidth - window.width - 20) - window.x
             : 0,
         bottom: window.maximized
           ? 0
           : typeof window.height === 'number'
-            ? Math.max(0, globalThis.window.innerHeight - window.height - 84)
+            ? Math.max(0, globalThis.window.innerHeight - window.height - 84) - window.y
             : 0,
       }}
     >
@@ -150,7 +157,7 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.15, ease: 'easeOut' }}
-        className={`absolute bg-haunted-black/95 border-2 rounded window-shadow backdrop-blur-sm pointer-events-auto ${isActive
+        className={`fixed bg-haunted-black/95 border-2 rounded window-shadow backdrop-blur-sm pointer-events-auto ${isActive
           ? 'border-haunted-accent shadow-[0_0_30px_rgba(255,107,107,0.5)]'
           : 'border-haunted-blue'
           }`}
@@ -158,10 +165,9 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
           width: window.maximized ? '100vw' : window.width,
           height: window.maximized ? '100vh' : window.height,
           zIndex: window.zIndex,
-          left: window.maximized ? 0 : undefined,
-          top: window.maximized ? 0 : undefined,
-          position: 'absolute',
-          transform: 'translate3d(0, 0, 0)',
+          left: window.maximized ? 0 : window.x,
+          top: window.maximized ? 0 : window.y,
+          transform: 'none',
           willChange: 'auto',
         }}
         onMouseDown={() => setActiveWindow(windowId)}

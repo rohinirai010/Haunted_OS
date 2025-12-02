@@ -46,11 +46,12 @@ export const useWindowStore = create<WindowStore>()(
           : 600;
 
         // Ensure window stays within screen bounds
+        const minY = isMobile ? 30 : 0; // Extra padding for mobile status bar
         const maxX = Math.max(0, window.innerWidth - windowWidth - 20);
-        const maxY = Math.max(0, window.innerHeight - windowHeight - 84); // 64 for taskbar + 20 padding
+        const maxY = Math.max(minY, window.innerHeight - windowHeight - 84); // 64 for taskbar + 20 padding
 
         const randomX = isMobile ? 10 : isTablet ? 50 : Math.min(100 + Math.random() * 200, maxX);
-        const randomY = isMobile ? 10 : isTablet ? 30 : Math.min(50 + Math.random() * 100, maxY);
+        const randomY = isMobile ? 30 : isTablet ? 40 : Math.min(50 + Math.random() * 100, maxY);
 
         const newWindow: WindowState = {
           id: `${appId}-${Date.now()}`,

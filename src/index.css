@@ -50,6 +50,21 @@
       transparent 2px
     );
     z-index: 100;
+    opacity: 0.5;
+  }
+  
+  /* Reduce VHS effect on mobile to prevent blinking */
+  @media (max-width: 640px) {
+    .vhs-overlay {
+      opacity: 0.2;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.08),
+        rgba(0, 0, 0, 0.08) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    }
   }
 
   .glitch-text {
@@ -133,6 +148,22 @@
   
   .flicker-text {
     animation: flicker-text 0.1s infinite;
+  }
+  
+  /* Reduce animations on mobile to prevent blinking and improve performance */
+  @media (max-width: 640px) {
+    .flicker-text {
+      animation: none;
+    }
+    
+    /* Reduce motion for users who prefer it or on mobile */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   }
 }
 
