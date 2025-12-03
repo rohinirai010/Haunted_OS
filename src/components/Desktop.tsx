@@ -37,11 +37,8 @@ export const Desktop = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // GHOST JUMP SCARE - only on initial desktop load when no apps are open (disabled on mobile)
+  // GHOST JUMP SCARE - only on initial desktop load when no apps are open
   useEffect(() => {
-    // Disable on mobile to prevent performance issues
-    if (isMobile) return;
-    
     // Only show if no windows are open (first time on desktop)
     if (windows.length === 0) {
       const timer = setTimeout(() => {
@@ -62,52 +59,66 @@ export const Desktop = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [isMobile]); // Re-run if mobile state changes
+  }, []); // Only run once on mount
 
   useEffect(() => {
-    // Disable heavy effects on mobile to prevent blinking
-    if (isMobile) return;
-    
-    // Random screen glitch effect
+    // Random screen glitch effect - less frequent on mobile
     const glitchInterval = setInterval(() => {
-      if (Math.random() > 0.95) {
+      const threshold = isMobile ? 0.98 : 0.95; // Less frequent on mobile
+      if (Math.random() > threshold) {
         setGlitch(true);
-        sounds.playScreech();
-        setTimeout(() => setGlitch(false), 100);
+        if (!isMobile) sounds.playScreech(); // No sound on mobile to save performance
+        setTimeout(() => setGlitch(false), isMobile ? 50 : 100); // Shorter duration on mobile
       }
-    }, 2000);
+    }, isMobile ? 5000 : 2000); // Less frequent on mobile
 
-    // Ambient horror sounds - MAXIMUM VARIETY
+    // Ambient horror sounds - Less variety on mobile
     const ambientInterval = setInterval(() => {
       const rand = Math.random();
-      if (rand > 0.95) {
-        sounds.playDistantScream();
-      } else if (rand > 0.92) {
-        sounds.playCrying();
-      } else if (rand > 0.89) {
-        sounds.playManiacalLaugh();
-      } else if (rand > 0.86) {
-        sounds.playCreepyAmbient();
-      } else if (rand > 0.83) {
-        sounds.playWhisper();
-      } else if (rand > 0.80) {
-        sounds.playHeartbeat();
-      } else if (rand > 0.77) {
-        sounds.playChainRattle();
-      } else if (rand > 0.74) {
-        sounds.playDoorCreak();
-      } else if (rand > 0.71) {
-        sounds.playFootsteps();
-      } else if (rand > 0.68) {
-        sounds.playGhostMoan();
-      } else if (rand > 0.65) {
-        sounds.playShush();
-      } else if (rand > 0.62) {
-        sounds.playBonesCrack();
-      } else if (rand > 0.59) {
-        sounds.playWitchCackle();
+      const threshold = isMobile ? 0.97 : 0.95; // Less frequent on mobile
+      
+      if (rand > threshold) {
+        // Only play lighter sounds on mobile
+        if (isMobile) {
+          if (rand > 0.99) {
+            sounds.playWhisper();
+          } else if (rand > 0.98) {
+            sounds.playDoorCreak();
+          } else {
+            sounds.playGhostMoan();
+          }
+        } else {
+          // Full variety on desktop
+          if (rand > 0.95) {
+            sounds.playDistantScream();
+          } else if (rand > 0.92) {
+            sounds.playCrying();
+          } else if (rand > 0.89) {
+            sounds.playManiacalLaugh();
+          } else if (rand > 0.86) {
+            sounds.playCreepyAmbient();
+          } else if (rand > 0.83) {
+            sounds.playWhisper();
+          } else if (rand > 0.80) {
+            sounds.playHeartbeat();
+          } else if (rand > 0.77) {
+            sounds.playChainRattle();
+          } else if (rand > 0.74) {
+            sounds.playDoorCreak();
+          } else if (rand > 0.71) {
+            sounds.playFootsteps();
+          } else if (rand > 0.68) {
+            sounds.playGhostMoan();
+          } else if (rand > 0.65) {
+            sounds.playShush();
+          } else if (rand > 0.62) {
+            sounds.playBonesCrack();
+          } else if (rand > 0.59) {
+            sounds.playWitchCackle();
+          }
+        }
       }
-    }, 6000); // More frequent - every 6 seconds
+    }, isMobile ? 12000 : 6000); // Less frequent on mobile - every 12 seconds
 
     // Random jump scares and dramatic effects
     const jumpScareInterval = setInterval(() => {
@@ -1712,8 +1723,13 @@ export const Desktop = () => {
         🕸️
       </motion.div>
 
-      {/* Blood Drips - Disabled on mobile */}
-      {!isMobile && (
+      {/* Blood Drips - Static on mobile, animated on desktop */}
+      {isMobile ? (
+        <>
+          <div className="absolute top-0 left-1/4 w-1 h-20 bg-gradient-to-b from-haunted-red to-transparent opacity-40" />
+          <div className="absolute top-0 right-1/3 w-1 h-24 bg-gradient-to-b from-haunted-red to-transparent opacity-50" />
+        </>
+      ) : (
         <>
           <div className="absolute top-0 left-1/4 w-1 h-20 bg-gradient-to-b from-haunted-red to-transparent opacity-60 blood-drip" style={{ animationDelay: '0s' }} />
           <div className="absolute top-0 left-1/2 w-1 h-16 bg-gradient-to-b from-haunted-red to-transparent opacity-50 blood-drip" style={{ animationDelay: '2s' }} />
@@ -1944,6 +1960,100 @@ export const Desktop = () => {
         }}
       />
       </>
+      )}
+
+      {/* MOBILE-FRIENDLY SCARY ELEMENTS - Lightweight animations */}
+      {isMobile && (
+        <>
+          {/* Subtle red glow pulse - very light */}
+          <motion.div
+            animate={{
+              opacity: [0.05, 0.15, 0.05],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute top-1/4 right-1/4 w-64 h-64 z-5 pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle, rgba(139,0,0,0.3), transparent 60%)',
+              filter: 'blur(20px)',
+            }}
+          />
+
+          {/* Floating skull - simple animation */}
+          <motion.div
+            animate={{
+              y: [0, -10, 0],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute bottom-32 left-10 text-4xl z-10 pointer-events-none filter drop-shadow-[0_0_10px_rgba(139,0,0,0.8)]"
+          >
+            💀
+          </motion.div>
+
+          {/* Floating ghost - simple animation */}
+          <motion.div
+            animate={{
+              y: [0, -15, 0],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: 2,
+            }}
+            className="absolute top-20 right-20 text-4xl z-10 pointer-events-none"
+          >
+            👻
+          </motion.div>
+
+          {/* Static tombstone */}
+          <div className="absolute bottom-20 left-1/4 z-10 pointer-events-none opacity-60">
+            <div className="text-5xl">🪦</div>
+          </div>
+
+          {/* Subtle creeping shadow - very light */}
+          <motion.div
+            animate={{
+              opacity: [0, 0.2, 0],
+              x: [-100, window.innerWidth + 100],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+            className="absolute bottom-0 w-24 h-48 z-10 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
+              filter: 'blur(8px)',
+            }}
+          />
+
+          {/* Pentagram - subtle rotation */}
+          <motion.div
+            animate={{
+              rotate: [0, 360],
+              opacity: [0.05, 0.1, 0.05],
+            }}
+            transition={{
+              rotate: { duration: 40, repeat: Infinity, ease: 'linear' },
+              opacity: { duration: 8, repeat: Infinity, ease: 'easeInOut' },
+            }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[2rem] text-haunted-red z-0 pointer-events-none"
+            style={{ filter: 'blur(2px)' }}
+          >
+            ⛧
+          </motion.div>
+        </>
       )}
 
       {/* CREEPING DARKNESS FROM CORNERS - Disabled on mobile */}
