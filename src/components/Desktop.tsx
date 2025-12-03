@@ -65,78 +65,102 @@ export const Desktop = () => {
     // Random screen glitch effect - less frequent on mobile
     const glitchInterval = setInterval(() => {
       const threshold = isMobile ? 0.98 : 0.95; // Less frequent on mobile
-      if (Math.random() > threshold) {
+      const rand = Math.random();
+      if (rand > threshold) {
         setGlitch(true);
-        if (!isMobile) sounds.playScreech(); // No sound on mobile to save performance
+        // Play lighter sound on mobile occasionally
+        if (isMobile && rand > 0.99) {
+          sounds.playScreech(); // Only 1% chance on mobile
+        } else if (!isMobile) {
+          sounds.playScreech(); // Always on desktop
+        }
         setTimeout(() => setGlitch(false), isMobile ? 50 : 100); // Shorter duration on mobile
       }
     }, isMobile ? 5000 : 2000); // Less frequent on mobile
 
-    // Ambient horror sounds - Less variety on mobile
+    // Ambient horror sounds - MAXIMUM SCARY on desktop
     const ambientInterval = setInterval(() => {
       const rand = Math.random();
-      const threshold = isMobile ? 0.97 : 0.95; // Less frequent on mobile
       
-      if (rand > threshold) {
-        // Only play lighter sounds on mobile
-        if (isMobile) {
-          if (rand > 0.99) {
-            sounds.playWhisper();
-          } else if (rand > 0.98) {
-            sounds.playDoorCreak();
-          } else {
-            sounds.playGhostMoan();
-          }
-        } else {
-          // Full variety on desktop
-          if (rand > 0.95) {
-            sounds.playDistantScream();
-          } else if (rand > 0.92) {
-            sounds.playCrying();
-          } else if (rand > 0.89) {
-            sounds.playManiacalLaugh();
-          } else if (rand > 0.86) {
-            sounds.playCreepyAmbient();
-          } else if (rand > 0.83) {
-            sounds.playWhisper();
-          } else if (rand > 0.80) {
-            sounds.playHeartbeat();
-          } else if (rand > 0.77) {
-            sounds.playChainRattle();
-          } else if (rand > 0.74) {
-            sounds.playDoorCreak();
-          } else if (rand > 0.71) {
-            sounds.playFootsteps();
-          } else if (rand > 0.68) {
-            sounds.playGhostMoan();
-          } else if (rand > 0.65) {
-            sounds.playShush();
-          } else if (rand > 0.62) {
-            sounds.playBonesCrack();
-          } else if (rand > 0.59) {
-            sounds.playWitchCackle();
-          }
+      if (isMobile) {
+        // MOBILE - ALWAYS play a lighter sound for atmosphere
+        const soundIndex = Math.floor(rand * 7); // 7 different lighter sounds
+        
+        switch(soundIndex) {
+          case 0: sounds.playWhisper(); break;
+          case 1: sounds.playDoorCreak(); break;
+          case 2: sounds.playFootsteps(); break;
+          case 3: sounds.playHeartbeat(); break;
+          case 4: sounds.playShush(); break;
+          case 5: sounds.playGhostMoan(); break;
+          case 6: sounds.playCreepyAmbient(); break;
+        }
+      } else {
+        // DESKTOP - ALWAYS PLAY A SOUND - Maximum horror!
+        const soundIndex = Math.floor(rand * 14); // 14 different sounds
+        
+        switch(soundIndex) {
+          case 0: sounds.playDistantScream(); break;
+          case 1: sounds.playCrying(); break;
+          case 2: sounds.playManiacalLaugh(); break;
+          case 3: sounds.playCreepyAmbient(); break;
+          case 4: sounds.playWhisper(); break;
+          case 5: sounds.playHeartbeat(); break;
+          case 6: sounds.playChainRattle(); break;
+          case 7: sounds.playDoorCreak(); break;
+          case 8: sounds.playFootsteps(); break;
+          case 9: sounds.playGhostMoan(); break;
+          case 10: sounds.playShush(); break;
+          case 11: sounds.playBonesCrack(); break;
+          case 12: sounds.playWitchCackle(); break;
+          case 13: sounds.playDemonGrowl(); break;
         }
       }
-    }, isMobile ? 12000 : 6000); // Less frequent on mobile - every 12 seconds
+    }, isMobile ? 8000 : 4000); // Every 8 seconds on mobile, 4 seconds on desktop
 
-    // Random jump scares and dramatic effects
+    // Random jump scares and dramatic effects - MAXIMUM SCARY on desktop
     const jumpScareInterval = setInterval(() => {
       const rand = Math.random();
-      if (rand > 0.98) {
-        sounds.playJumpScare();
-        setShake(true);
-        setTimeout(() => setShake(false), 500);
-      } else if (rand > 0.96) {
-        sounds.playThunder();
-        setShake(true);
-        setTimeout(() => setShake(false), 300);
-      } else if (rand > 0.94) {
-        sounds.playBomb();
-        setShake(true);
-        setTimeout(() => setShake(false), 400);
+      
+      if (isMobile) {
+        // MOBILE - More frequent scary sounds, no shake
+        if (rand > 0.85) {
+          sounds.playDistantScream(); // Distant scream
+        } else if (rand > 0.70) {
+          sounds.playChainRattle(); // Chain rattle
+        } else if (rand > 0.55) {
+          sounds.playBonesCrack(); // Bones cracking
+        } else if (rand > 0.40) {
+          sounds.playWitchCackle(); // Witch cackle
+        } else if (rand > 0.25) {
+          sounds.playCrying(); // Crying
+        }
+      } else {
+        // DESKTOP - More frequent and varied jump scares!
+        if (rand > 0.95) {
+          sounds.playJumpScare();
+          setShake(true);
+          setTimeout(() => setShake(false), 500);
+        } else if (rand > 0.90) {
+          sounds.playThunder();
+          setShake(true);
+          setTimeout(() => setShake(false), 300);
+        } else if (rand > 0.85) {
+          sounds.playBomb();
+          setShake(true);
+          setTimeout(() => setShake(false), 400);
+        } else if (rand > 0.80) {
+          // Additional scary sounds with shake
+          sounds.playDistantScream();
+          setShake(true);
+          setTimeout(() => setShake(false), 300);
+        } else if (rand > 0.75) {
+          sounds.playManiacalLaugh();
+          setShake(true);
+          setTimeout(() => setShake(false), 400);
+        }
       }
-    }, 15000);
+    }, isMobile ? 15000 : 8000); // Every 15 seconds on mobile, 8 seconds on desktop
 
     return () => {
       clearInterval(glitchInterval);

@@ -157,7 +157,7 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.15, ease: 'easeOut' }}
-        className={`fixed bg-haunted-black/95 border-2 rounded window-shadow backdrop-blur-sm pointer-events-auto ${isActive
+        className={`fixed bg-haunted-black/95 border-2 rounded-lg window-shadow backdrop-blur-sm pointer-events-auto ${isActive
           ? 'border-haunted-accent shadow-[0_0_30px_rgba(255,107,107,0.5)]'
           : 'border-haunted-blue'
           }`}
@@ -175,20 +175,20 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
       >
         {/* Window Header - Responsive */}
         <div className="window-header bg-gradient-to-b from-haunted-blue to-haunted-black border-b-2 border-haunted-accent p-2 sm:p-2 flex items-center justify-between cursor-move touch-none">
-          <span className="text-haunted-text font-mono text-[13px] sm:text-sm text-glow truncate pr-2">
+          <span className="text-haunted-text font-mono text-[13.5px] sm:text-sm text-glow truncate pr-2">
             {window.title}
           </span>
-          <div className="flex gap-1 sm:gap-2 flex-shrink-0">
+          <div className="flex gap-1.5 sm:gap-2 flex-shrink-0">
             <button
               onClick={handleMinimize}
               onTouchEnd={(e) => {
                 e.preventDefault();
                 handleMinimize();
               }}
-              className="w-5 h-5 sm:w-6 sm:h-6 bg-haunted-blue hover:bg-haunted-accent active:bg-haunted-accent border border-haunted-accent rounded flex items-center justify-center transition-all active:scale-95 touch-manipulation"
+              className="w-6 h-6 bg-haunted-blue hover:bg-haunted-accent active:bg-haunted-accent border border-haunted-accent rounded-lg flex items-center justify-center transition-all active:scale-95 touch-manipulation"
               title="Minimize"
             >
-              <Minus size={16} className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-haunted-text" />
+              <Minus size={16} className="w-3.5 h-3.5 text-haunted-text" />
             </button>
             <button
               onClick={handleMaximize}
@@ -196,7 +196,7 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
                 e.preventDefault();
                 handleMaximize();
               }}
-              className="w-5 h-5 sm:w-6 sm:h-6 bg-haunted-blue hover:bg-haunted-accent active:bg-haunted-accent border border-haunted-accent rounded flex items-center justify-center transition-all active:scale-95 touch-manipulation"
+              className="w-6 h-6 bg-haunted-blue hover:bg-haunted-accent active:bg-haunted-accent border border-haunted-accent rounded-lg flex items-center justify-center transition-all active:scale-95 touch-manipulation"
               title="Maximize"
             >
               <Square size={16} className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-haunted-text" />
@@ -207,10 +207,10 @@ export const WindowManager = ({ children, windowId }: WindowManagerProps) => {
                 e.preventDefault();
                 handleClose();
               }}
-              className="w-5 h-5 sm:w-6 sm:h-6 bg-haunted-red hover:bg-haunted-accent active:bg-haunted-accent border border-haunted-accent rounded flex items-center justify-center transition-all active:scale-95 touch-manipulation"
+              className="w-6 h-6 bg-haunted-red hover:bg-haunted-accent active:bg-haunted-accent border border-haunted-accent rounded-lg flex items-center justify-center transition-all active:scale-95 touch-manipulation"
               title="Close"
             >
-              <X size={16} className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-haunted-text" />
+              <X size={16} className="w-3.5 h-3.5 text-haunted-text" />
             </button>
           </div>
         </div>
