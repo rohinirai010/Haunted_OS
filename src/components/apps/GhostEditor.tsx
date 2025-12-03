@@ -8,44 +8,82 @@ interface GhostEditorProps {
 export const GhostEditor = ({ windowId }: GhostEditorProps) => {
   const [content, setContent] = useState('');
   const [ghostTyping, setGhostTyping] = useState(false);
+  const [lastTypingTime, setLastTypingTime] = useState(Date.now());
 
   useEffect(() => {
     // Load saved content
     const saved = localStorage.getItem(`ghost-editor-${windowId}`);
     if (saved) setContent(saved);
+  }, [windowId]);
 
-    // Random ghost typing events
+  useEffect(() => {
+    // Ghost typing triggers when user stops typing
+    // Checks every 5 seconds, with increasing chance
     const ghostInterval = setInterval(() => {
-      if (Math.random() > 0.95 && !ghostTyping) {
-        setGhostTyping(true);
-        const ghostMessages = [
-          '...help me...',
-          '...they are watching...',
-          '...do not trust the shadows...',
-          '...I am still here...',
-          '...remember me...',
-        ];
-        const message = ghostMessages[Math.floor(Math.random() * ghostMessages.length)];
+      if (!ghostTyping) {
+        const timeSinceLastTyping = Date.now() - lastTypingTime;
         
-        let i = 0;
-        const typeInterval = setInterval(() => {
-          if (i < message.length) {
-            setContent(prev => prev + message[i]);
-            i++;
-          } else {
-            clearInterval(typeInterval);
-            setGhostTyping(false);
+        // User has stopped typing for at least 5 seconds
+        if (timeSinceLastTyping >= 5000) {
+          // Calculate chance based on how long user has been idle
+          // 5s = 50%, 10s = 70%, 15s = 85%, 20s+ = 95%
+          const idleSeconds = Math.floor(timeSinceLastTyping / 1000);
+          let chance = 0.5; // 50% at 5 seconds
+          
+          if (idleSeconds >= 20) chance = 0.95;
+          else if (idleSeconds >= 15) chance = 0.85;
+          else if (idleSeconds >= 10) chance = 0.70;
+          
+          const rand = Math.random();
+          
+          if (rand < chance) {
+            setGhostTyping(true);
+            
+            const ghostMessages = [
+              '\n...help me...\n',
+              '\n...they are watching...\n',
+              '\n...do not trust the shadows...\n',
+              '\n...I am still here...\n',
+              '\n...remember me...\n',
+              '\n...get out while you can...\n',
+              '\n...it is too late for me...\n',
+              '\n...they know you are here...\n',
+              '\n...behind you...\n',
+              '\n...do not look back...\n',
+              '\n...stop writing...\n',
+              '\n...this is my document now...\n',
+              '\n...I can see you...\n',
+              '\n...why did you come here...\n',
+            ];
+            const message = ghostMessages[Math.floor(Math.random() * ghostMessages.length)];
+            
+            let i = 0;
+            const typeInterval = setInterval(() => {
+              if (i < message.length) {
+                setContent(prev => prev + message[i]);
+                i++;
+              } else {
+                clearInterval(typeInterval);
+                setTimeout(() => {
+                  setGhostTyping(false);
+                  setLastTypingTime(Date.now()); // Reset timer after ghost types
+                }, 1000);
+              }
+            }, 80);
+            
+            return () => clearInterval(typeInterval);
           }
-        }, 100);
+        }
       }
-    }, 10000);
+    }, 5000); // Check every 5 seconds
 
     return () => clearInterval(ghostInterval);
-  }, [windowId, ghostTyping]);
+  }, [ghostTyping, lastTypingTime]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setContent(newContent);
+    setLastTypingTime(Date.now()); // Update last typing time when user types
     localStorage.setItem(`ghost-editor-${windowId}`, newContent);
   };
 
