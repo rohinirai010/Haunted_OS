@@ -1,4 +1,4 @@
-# 👻 Haunted OS - Kiroween 2024 Submission
+# 👻 Haunted OS - Kiroween 2025 Submission
 
 A spine-chilling web-based operating system simulation featuring AI-powered interactions, immersive horror aesthetics, and paranormal experiences.
 
